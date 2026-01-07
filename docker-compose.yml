@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  janus:
+    image: canyan/janus-gateway:latest
+    container_name: janus-gateway
+    # network_mode: "host" # Not supported on Windows
+    ports:
+      - "8088:8088"
+      - "8188:8188"
+      - "7088:7088"
+      - "7188:7188"
+      - "10000-10200:10000-10200/udp"
+    volumes:
+      - ./janus-config:/usr/local/etc/janus
+    command: [ "janus", "-F", "/usr/local/etc/janus" ]
+    restart: always
+
+  fastapi:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - JANUS_ADMIN_URL=http://janus:8088/janus
+      - JANUS_ADMIN_SECRET=janusoverlord
+    depends_on:
+      - janus

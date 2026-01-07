@@ -1,0 +1,4 @@
+general: {
+	ws = false
+	wss = false
+}
